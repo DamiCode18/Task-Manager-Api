@@ -1,7 +1,6 @@
 const mongoose = require("mongoose")
-
-const connectionString =
-  'mongodb+srv://damicode:jCqRzhl8aW48ZCPM@task-manager.ge1agkz.mongodb.net/Task-Manager?retryWrites=true&w=majority';
+require('dotenv').config();
+const connectionString = process.env.DB_CONNECTION_STRING
 
 mongoose
   .connect(connectionString)
