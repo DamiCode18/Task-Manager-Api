@@ -3,13 +3,14 @@ require('dotenv').config();
 
 const express = require("express");
 const app = express();
+const cors = require("cors")
 
 const tasks = require("./routes/tasks");
 const auth = require("./routes/auth");
 const users = require("./routes/users");
 
 const connectDB = require("./config/database");
-const { notFound } = require("./middlewares/notFound");
+const { notFound } = require("./middlewares/error-handler");
 const { errorHandlerMiddleware } = require("./middlewares/error-handler");
 
 
@@ -17,7 +18,10 @@ const URI = process.env.MONGO_URI;
 const port = process.env.SERVER_PORT || 5000;
 
 
+//cors
+app.use(cors())
 //middleware
+
 app.use(express.json());
 
 //routes
@@ -25,12 +29,9 @@ app.use("/api/v1/tasks", tasks);
 app.use("/api/v1", auth);
 app.use("/api/v1/users", users);
 
-
-//custom not-found
-app.use(notFound); 
-
 //error handler
 app.use(errorHandlerMiddleware); 
+app.use(notFound)
 
 
 const start = async () => {

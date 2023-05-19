@@ -2,10 +2,10 @@ const { asyncWrapper } = require("../../middlewares/async");
 const User = require("../../models/user");
 var bcrypt = require("bcryptjs");
 var jwt = require("jsonwebtoken");
+const omit = require("lodash");
 // ...
 
 const login = asyncWrapper(async (req, res) => {
-
   // Our login logic starts here
   try {
     // Get user input
@@ -24,15 +24,21 @@ const login = asyncWrapper(async (req, res) => {
         { user_id: user._id, email },
         process.env.TOKEN_KEY,
         {
-          expiresIn: "2h",
+          expiresIn: "10m",
         }
       );
 
       // save user token
       user.token = token;
 
-      // user
-      res.status(200).json(user);
+      const userDataWithoutPassword = omit(user, 'password');
+      res
+        .status(200)
+        .json({
+          success: true,
+          msg: "Logged in successfully",
+          data: user,
+        });
     }
     res.status(400).send("Invalid Credentials");
   } catch (err) {
@@ -43,5 +49,5 @@ const login = asyncWrapper(async (req, res) => {
 
 // ...
 module.exports = {
-    login
-}
+  login,
+};

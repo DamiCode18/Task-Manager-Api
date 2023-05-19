@@ -1,7 +1,7 @@
 const { asyncWrapper } = require("../../middlewares/async");
 const User = require("../../models/user");
-var bcrypt = require('bcryptjs');
-var jwt = require('jsonwebtoken');
+var bcrypt = require("bcryptjs");
+var jwt = require("jsonwebtoken");
 
 const register = asyncWrapper(async (req, res) => {
   // Our register logic starts here
@@ -11,7 +11,7 @@ const register = asyncWrapper(async (req, res) => {
 
     // Validate user input
     if (!(email && password && first_name && last_name && username)) {
-      res.status(400).send("All input is required");
+      return await res.status(400).json({msg: "All input is required"});
     }
 
     // check if user already exist
@@ -19,7 +19,7 @@ const register = asyncWrapper(async (req, res) => {
     const oldUser = await User.findOne({ email });
 
     if (oldUser) {
-      return res.status(409).send("User Already Exist. Please Login");
+      return res.status(409).json({msg: "User Already Exist. Please Login"});
     }
 
     //Encrypt user password
@@ -33,17 +33,6 @@ const register = asyncWrapper(async (req, res) => {
       email: email.toLowerCase(), // sanitize: convert email to lowercase
       password: encryptedPassword,
     });
-
-    // Create token
-    const token = jwt.sign(
-      { user_id: user._id, email },
-      process.env.TOKEN_KEY,
-      {
-        expiresIn: "2h",
-      }
-    );
-    // save user token
-    user.token = token;
 
     // return new user
     res.status(201).json(user);

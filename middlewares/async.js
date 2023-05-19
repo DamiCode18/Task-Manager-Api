@@ -8,7 +8,6 @@ const asyncWrapper = (fn) => {
   };
 };
 
-
 module.exports = {
-    asyncWrapper
-}
+  asyncWrapper,
+};
